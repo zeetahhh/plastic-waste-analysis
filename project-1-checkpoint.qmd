@@ -38,6 +38,6 @@ The two years of the data sets (2019 and 2020) were stacked on top of each other
 
 **Visualizations Sketches:**
 
-\![\](project_checkpoint_1_sketches.png)
+![](project_checkpoint_1_sketches.png)
 
 \*\*note: For the second sketch, there is no GDP column included because it is from external data that I will be doing more research on, so I just labeled it "GDP" for now.
