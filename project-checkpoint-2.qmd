@@ -4,39 +4,33 @@ format: html
 editor: visual
 ---
 
-## Data Summary
+## Data Summary (creating a new column)
 
 ```{r}
-# Using R
-# Option 1: tidytuesdayR R package 
-## install.packages("tidytuesdayR")
-tuesdata <- tidytuesdayR::tt_load('2025-06-24')
-## OR
-tuesdata <- tidytuesdayR::tt_load(2025, week = 25)
+library(gt)
+library(tidyverse)
 
 cases_month <- tuesdata$cases_month
 cases_year <- tuesdata$cases_year
 
 View(cases_month)
 View(cases_year)
-
-library(gt)
 ```
 
-**Which country and region have the most measles and rubella cases combined?**
+**Research Question: Which country and region have the most measles and rubella cases combined?**
 
 ```{r}
 total_country_cases <- cases_year |>
   mutate(
-    across(c(measles_total, rubella_total), as.numeric)) |>
-  group_by(region, country) |>
+    across(c(measles_total, rubella_total), as.numeric)) |> # convert columns to numbers
+  group_by(region, country) |> # group by region and country
   summarize(
     total_measles = sum(measles_total),
     total_rubella = sum(rubella_total),
     .groups = "drop") |>
   mutate(
-    total_cases = total_measles + total_rubella) |>
-arrange(desc(total_cases))
+    total_cases = total_measles + total_rubella) |> # new column, measles and rubella cases combined
+arrange(desc(total_cases)) # sorts from highest to lowest cases
 
 total_country_cases |>
   head(10) |>
