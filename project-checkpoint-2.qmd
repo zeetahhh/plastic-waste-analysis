@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-## Quarto
+## Data Summary
 
 ```{r}
 # Using R
@@ -50,3 +50,5 @@ total_country_cases |>
     total_cases = "Total Combined Cases"
   ) 
 ```
+
+Based on the data summary of the total combined cases of measles and rubella, India, China, and Madagascar are the top three countries (grouped by region) that have the most measles cases from the years 2018-2026.
