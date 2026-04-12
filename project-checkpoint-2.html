@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Aryan Ajith Nair, Amanda Dong, Natalie Cartwright, Zita Tam">
 
 <title>project-checkpoint-2</title>
 <style>
@@ -89,6 +90,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Aryan Ajith Nair, Amanda Dong, Natalie Cartwright, Zita Tam </p>
+          </div>
+  </div>
     
   
     
@@ -99,8 +106,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="data-summary-creating-a-new-column" class="level2">
-<h2 class="anchored" data-anchor-id="data-summary-creating-a-new-column">Data Summary (creating a new column)</h2>
+<section id="loading-in-the-data-set" class="level2">
+<h2 class="anchored" data-anchor-id="loading-in-the-data-set"><strong>Loading in the data set</strong></h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -139,49 +146,185 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
 </div>
-<p><strong>Research Question: Which country and region have the most measles and rubella cases combined?</strong></p>
+<p>Amanda Dong</p>
+</section>
+<section id="using-existing-columns-custom-function" class="level2">
+<h2 class="anchored" data-anchor-id="using-existing-columns-custom-function">Using Existing Columns + Custom Function</h2>
+<section id="research-question-do-the-number-of-measles-cases-change-depending-on-the-time-of-year" class="level3">
+<h3 class="anchored" data-anchor-id="research-question-do-the-number-of-measles-cases-change-depending-on-the-time-of-year"><strong>Research question:</strong> Do the number of measles cases change depending on the time of year?</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>total_country_cases <span class="ot">&lt;-</span> cases_year <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(measles_total, rubella_total), as.numeric)) <span class="sc">|&gt;</span> <span class="co"># convert columns to numbers</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(region, country) <span class="sc">|&gt;</span> <span class="co"># group by region and country</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_measles =</span> <span class="fu">sum</span>(measles_total),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_rubella =</span> <span class="fu">sum</span>(rubella_total),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> total_measles <span class="sc">+</span> total_rubella) <span class="sc">|&gt;</span> <span class="co"># new column, measles and rubella cases combined</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">desc</span>(total_cases)) <span class="co"># sorts from highest to lowest cases</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>total_country_cases <span class="sc">|&gt;</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">region =</span> <span class="st">"Region"</span>,</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="st">"Country"</span>,</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_measles =</span> <span class="st">"Total Measles Cases"</span>,</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_rubella =</span> <span class="st">"Total Ruebella Cases"</span>,</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> <span class="st">"Total Combined Cases"</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>monthlyStats <span class="ot">&lt;-</span> <span class="cf">function</span>(monthly_measles) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">mean_measles =</span> <span class="fu">mean</span>(monthly_measles, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">median_measles =</span> <span class="fu">median</span>(monthly_measles, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">max_measles =</span> <span class="fu">max</span>(monthly_measles, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>measles_by_month <span class="ot">&lt;-</span> <span class="fu">tibble</span>()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  monthly_measles <span class="ot">&lt;-</span> cases_month <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(month <span class="sc">==</span> i) <span class="sc">|&gt;</span> </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(measles_total)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  measles_by_month <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(measles_by_month, </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">monthlyStats</span>(monthly_measles) <span class="sc">|&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">mutate</span>(<span class="at">month =</span> i))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>measles_by_month <span class="ot">&lt;-</span> measles_by_month <span class="sc">|&gt;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(month, mean_measles, median_measles, max_measles)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion"><strong>Conclusion</strong></h3>
+<p>According to our resulting summaries, it appears the number of measles cases tends to be the most during the beginning of the year (January - March), while the number of cases seems to be the lowest during the ansition between summer and fall (August - October). However, it’s important to keep in mind that these are summaries over the last 9 years, and include cases all over the world (and seasons/environment are different depending on location).</p>
+<p>Aryan Ajith Nair</p>
+</section>
+<section id="modified-columns-custom-function" class="level3">
+<h3 class="anchored" data-anchor-id="modified-columns-custom-function">Modified Columns + Custom Function</h3>
+</section>
+<section id="research-question-has-the-total-number-of-reported-measles-cases-increased-or-decreased-over-time-globally" class="level3">
+<h3 class="anchored" data-anchor-id="research-question-has-the-total-number-of-reported-measles-cases-increased-or-decreased-over-time-globally"><strong>Research question:</strong> Has the total number of reported measles cases increased or decreased over time globally?</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>trend_label <span class="ot">&lt;-</span> <span class="cf">function</span>(current, previous) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="ot">&lt;-</span> (current <span class="sc">-</span> previous) <span class="sc">/</span> previous <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">case_when</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    pct_change <span class="sc">&lt;</span> <span class="sc">-</span><span class="dv">20</span> <span class="sc">~</span> <span class="st">"declining"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    pct_change <span class="sc">&gt;</span>  <span class="dv">20</span> <span class="sc">~</span> <span class="st">"surging"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.default =</span> <span class="st">"stable"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>yearly_summary <span class="ot">&lt;-</span> cases_year <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> <span class="fu">sum</span>(measles_total, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_countries =</span> <span class="fu">n_distinct</span>(country),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year) <span class="sc">|&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">prev_total =</span> <span class="fu">lag</span>(total_cases),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_change =</span> <span class="fu">round</span>((total_cases <span class="sc">-</span> prev_total) <span class="sc">/</span> prev_total <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">trend =</span> <span class="fu">trend_label</span>(total_cases, prev_total)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, total_cases, n_countries, pct_change, trend)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(yearly_summary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 5
+    year total_cases n_countries pct_change trend    
+   &lt;dbl&gt;       &lt;dbl&gt;       &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;    
+ 1  2012      112548         150       NA   stable   
+ 2  2013      178526         148       58.6 surging  
+ 3  2014      290888         154       62.9 surging  
+ 4  2015      247474         176      -14.9 stable   
+ 5  2016      180015         179      -27.3 declining
+ 6  2017      168190         182       -6.6 stable   
+ 7  2018      276157         182       64.2 surging  
+ 8  2019      541401         187       96   surging  
+ 9  2020       93840         175      -82.7 declining
+10  2021       59619         153      -36.5 declining
+11  2022      174340         168      192.  surging  
+12  2023      321889         176       84.6 surging  
+13  2024      359534         184       11.7 stable   
+14  2025       88853         168      -75.3 declining</code></pre>
+</div>
+</div>
+</section>
+<section id="conclusion-1" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-1"><strong>Conclusion</strong></h3>
+<p>According to my summary table, global reported measles cases show an overall declining trend across the years in the dataset, with the most years labeled as declining or stable. Isolated surging years are visible. This points to a periodic resurgence likely tied to drops in vaccination coverage or large outbreaks in highly populated countries.</p>
+<p>Natalie Cartwright</p>
+</section>
+</section>
+<section id="using-existing-columns-iteration-for-summary-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="using-existing-columns-iteration-for-summary-statistics">Using Existing Columns + Iteration for Summary Statistics</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>max <span class="ot">&lt;-</span> <span class="fu">nrow</span>(cases_year)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cases_year)) {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  lab <span class="ot">&lt;-</span> cases_year<span class="sc">$</span>measles_lab_confirmed[i]</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  epi <span class="ot">&lt;-</span> cases_year<span class="sc">$</span>measles_epi_linked[i]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  clinic <span class="ot">&lt;-</span> cases_year<span class="sc">$</span>measles_clinical[i]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (lab <span class="sc">&gt;=</span> epi <span class="sc">&amp;</span> lab <span class="sc">&gt;=</span> clinic){</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    max[i] <span class="ot">&lt;-</span> <span class="st">"lab"</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (epi <span class="sc">&gt;=</span> lab <span class="sc">&amp;</span> epi <span class="sc">&gt;=</span> clinic) {</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    max[i] <span class="ot">&lt;-</span> <span class="st">"epi"</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    max[i] <span class="ot">&lt;-</span> <span class="st">"clinic"</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>max_tbl <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">method =</span> max)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>sum_prop <span class="ot">&lt;-</span> max_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(method)<span class="sc">|&gt;</span> </span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>(), <span class="at">prop =</span> <span class="fu">n</span>() <span class="sc">/</span> <span class="fu">nrow</span>(max_tbl))</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>sum_prop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  method count   prop
+  &lt;chr&gt;  &lt;int&gt;  &lt;dbl&gt;
+1 clinic   348 0.146 
+2 epi      162 0.0680
+3 lab     1872 0.786 </code></pre>
+</div>
+</div>
+<section id="conclusion-2" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-2"><strong>Conclusion</strong></h3>
+<p>According to my summary table, the method of confirming measles cases by the lab results in finding the most measles cases. Around 79% of cases of measles were found by confirming it in the lab.</p>
+<p>Zita Tam</p>
+</section>
+</section>
+<section id="research-question-which-country-and-region-have-the-most-measles-and-rubella-cases-combined" class="level2">
+<h2 class="anchored" data-anchor-id="research-question-which-country-and-region-have-the-most-measles-and-rubella-cases-combined"><strong>Research Question: Which country and region have the most measles and rubella cases combined?</strong></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>total_country_cases <span class="ot">&lt;-</span> cases_year <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(measles_total, rubella_total), as.numeric)) <span class="sc">|&gt;</span> <span class="co"># convert columns to numbers</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(region, country) <span class="sc">|&gt;</span> <span class="co"># group by region and country</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_measles =</span> <span class="fu">sum</span>(measles_total),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_rubella =</span> <span class="fu">sum</span>(rubella_total),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> total_measles <span class="sc">+</span> total_rubella) <span class="sc">|&gt;</span> <span class="co"># new column, measles and rubella cases combined</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">desc</span>(total_cases)) <span class="co"># sorts from highest to lowest cases</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>total_country_cases <span class="sc">|&gt;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">region =</span> <span class="st">"Region"</span>,</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="st">"Country"</span>,</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_measles =</span> <span class="st">"Total Measles Cases"</span>,</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_rubella =</span> <span class="st">"Total Ruebella Cases"</span>,</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_cases =</span> <span class="st">"Total Combined Cases"</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  ) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div id="srbpujypea" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#srbpujypea table {
+<div id="qvtsmvkdww" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qvtsmvkdww table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#srbpujypea thead, #srbpujypea tbody, #srbpujypea tfoot, #srbpujypea tr, #srbpujypea td, #srbpujypea th {
+#qvtsmvkdww thead, #qvtsmvkdww tbody, #qvtsmvkdww tfoot, #qvtsmvkdww tr, #qvtsmvkdww td, #qvtsmvkdww th {
   border-style: none;
 }
 
-#srbpujypea p {
+#qvtsmvkdww p {
   margin: 0;
   padding: 0;
 }
 
-#srbpujypea .gt_table {
+#qvtsmvkdww .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -207,12 +350,12 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-left-color: #D3D3D3;
 }
 
-#srbpujypea .gt_caption {
+#qvtsmvkdww .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#srbpujypea .gt_title {
+#qvtsmvkdww .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -224,7 +367,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-bottom-width: 0;
 }
 
-#srbpujypea .gt_subtitle {
+#qvtsmvkdww .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -236,7 +379,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-top-width: 0;
 }
 
-#srbpujypea .gt_heading {
+#qvtsmvkdww .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -248,13 +391,13 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-right-color: #D3D3D3;
 }
 
-#srbpujypea .gt_bottom_border {
+#qvtsmvkdww .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#srbpujypea .gt_col_headings {
+#qvtsmvkdww .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -269,7 +412,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-right-color: #D3D3D3;
 }
 
-#srbpujypea .gt_col_heading {
+#qvtsmvkdww .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -289,7 +432,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   overflow-x: hidden;
 }
 
-#srbpujypea .gt_column_spanner_outer {
+#qvtsmvkdww .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -301,15 +444,15 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   padding-right: 4px;
 }
 
-#srbpujypea .gt_column_spanner_outer:first-child {
+#qvtsmvkdww .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#srbpujypea .gt_column_spanner_outer:last-child {
+#qvtsmvkdww .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#srbpujypea .gt_column_spanner {
+#qvtsmvkdww .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -321,11 +464,11 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   width: 100%;
 }
 
-#srbpujypea .gt_spanner_row {
+#qvtsmvkdww .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#srbpujypea .gt_group_heading {
+#qvtsmvkdww .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -351,7 +494,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   text-align: left;
 }
 
-#srbpujypea .gt_empty_group_heading {
+#qvtsmvkdww .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -366,15 +509,15 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   vertical-align: middle;
 }
 
-#srbpujypea .gt_from_md > :first-child {
+#qvtsmvkdww .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#srbpujypea .gt_from_md > :last-child {
+#qvtsmvkdww .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#srbpujypea .gt_row {
+#qvtsmvkdww .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -393,7 +536,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   overflow-x: hidden;
 }
 
-#srbpujypea .gt_stub {
+#qvtsmvkdww .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -406,7 +549,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   padding-right: 5px;
 }
 
-#srbpujypea .gt_stub_row_group {
+#qvtsmvkdww .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -420,15 +563,15 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   vertical-align: top;
 }
 
-#srbpujypea .gt_row_group_first td {
+#qvtsmvkdww .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#srbpujypea .gt_row_group_first th {
+#qvtsmvkdww .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#srbpujypea .gt_summary_row {
+#qvtsmvkdww .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -438,16 +581,16 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   padding-right: 5px;
 }
 
-#srbpujypea .gt_first_summary_row {
+#qvtsmvkdww .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#srbpujypea .gt_first_summary_row.thick {
+#qvtsmvkdww .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#srbpujypea .gt_last_summary_row {
+#qvtsmvkdww .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -457,7 +600,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-bottom-color: #D3D3D3;
 }
 
-#srbpujypea .gt_grand_summary_row {
+#qvtsmvkdww .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -467,7 +610,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   padding-right: 5px;
 }
 
-#srbpujypea .gt_first_grand_summary_row {
+#qvtsmvkdww .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -477,7 +620,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-top-color: #D3D3D3;
 }
 
-#srbpujypea .gt_last_grand_summary_row_top {
+#qvtsmvkdww .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -487,11 +630,11 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-bottom-color: #D3D3D3;
 }
 
-#srbpujypea .gt_striped {
+#qvtsmvkdww .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#srbpujypea .gt_table_body {
+#qvtsmvkdww .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -500,7 +643,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-bottom-color: #D3D3D3;
 }
 
-#srbpujypea .gt_footnotes {
+#qvtsmvkdww .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -514,7 +657,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-right-color: #D3D3D3;
 }
 
-#srbpujypea .gt_footnote {
+#qvtsmvkdww .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -523,7 +666,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   padding-right: 5px;
 }
 
-#srbpujypea .gt_sourcenotes {
+#qvtsmvkdww .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -537,7 +680,7 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   border-right-color: #D3D3D3;
 }
 
-#srbpujypea .gt_sourcenote {
+#qvtsmvkdww .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -545,72 +688,72 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
   padding-right: 5px;
 }
 
-#srbpujypea .gt_left {
+#qvtsmvkdww .gt_left {
   text-align: left;
 }
 
-#srbpujypea .gt_center {
+#qvtsmvkdww .gt_center {
   text-align: center;
 }
 
-#srbpujypea .gt_right {
+#qvtsmvkdww .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#srbpujypea .gt_font_normal {
+#qvtsmvkdww .gt_font_normal {
   font-weight: normal;
 }
 
-#srbpujypea .gt_font_bold {
+#qvtsmvkdww .gt_font_bold {
   font-weight: bold;
 }
 
-#srbpujypea .gt_font_italic {
+#qvtsmvkdww .gt_font_italic {
   font-style: italic;
 }
 
-#srbpujypea .gt_super {
+#qvtsmvkdww .gt_super {
   font-size: 65%;
 }
 
-#srbpujypea .gt_footnote_marks {
+#qvtsmvkdww .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#srbpujypea .gt_asterisk {
+#qvtsmvkdww .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#srbpujypea .gt_indent_1 {
+#qvtsmvkdww .gt_indent_1 {
   text-indent: 5px;
 }
 
-#srbpujypea .gt_indent_2 {
+#qvtsmvkdww .gt_indent_2 {
   text-indent: 10px;
 }
 
-#srbpujypea .gt_indent_3 {
+#qvtsmvkdww .gt_indent_3 {
   text-indent: 15px;
 }
 
-#srbpujypea .gt_indent_4 {
+#qvtsmvkdww .gt_indent_4 {
   text-indent: 20px;
 }
 
-#srbpujypea .gt_indent_5 {
+#qvtsmvkdww .gt_indent_5 {
   text-indent: 25px;
 }
 
-#srbpujypea .katex-display {
+#qvtsmvkdww .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#srbpujypea div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#qvtsmvkdww div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -702,7 +845,10 @@ dbl (16): year, total_population, annualized_population_most_recent_year_onl...
 </div>
 </div>
 </div>
+<section id="conclusion-3" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion-3"><strong>Conclusion</strong></h3>
 <p>Based on the data summary of the total combined cases of measles and rubella, India, China, and Madagascar are the top three countries (grouped by region) that have the most measles cases from the years 2018-2026.</p>
+</section>
 </section>
 
 </main>
