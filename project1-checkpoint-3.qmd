@@ -1,0 +1,65 @@
+---
+title: "project-1-checkpoint-3"
+author: Natalie, Cartwright, Amanda Dong, Aryan Nair, Zita Tam
+format: html
+---
+
+## **Loading in the data set**
+
+```{r}
+library(gt)
+library(tidyverse)
+
+cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
+cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_year.csv')
+```
+
+#### Read in CSV
+
+```{r}
+url <- "https://raw.githubusercontent.com/amandaadong/project1/main/GDPdata.csv"
+gdp_df <- read.csv(url)
+head(gdp_df)
+```
+
+#### Join the datasets
+
+```{r}
+meta_df <- cases_year |>
+  left_join(gdp_df, by = c("iso3" = "country", "year" = "year"))
+```
+
+#### Research Question: How does the relationship between GDP per capita and measles incidence rate change before and after COVID?
+
+```{r}
+meta_df |>
+  mutate(
+    time_period = case_when(
+      year >= 2015 & year <= 2019 ~ "Pre-COVID (2015-2019)",
+      year >= 2020 & year <= 2023 ~ "Post-COVID (2020-2023)"),
+      time_period = factor(time_period, levels = c("Pre-COVID (2015-2019)", "Post-COVID (2020-2023)"))) |>
+  filter(!is.na(time_period)) |>
+  group_by(iso3, country_full, region, time_period) |>
+  summarize(
+    avg_incidence = mean(measles_incidence_rate_per_1000000_total_population, na.rm = TRUE),
+    avg_gdp = mean(gdp_per_capita_nominal, na.rm = TRUE)) |>
+  filter(!is.na(avg_incidence), !is.na(avg_gdp), 
+         avg_incidence < 500, avg_gdp > 0) |> #removed extreme outliers to observe differences
+  ggplot(aes(x = avg_gdp, y = avg_incidence, color = region)) +
+  geom_point(alpha = 0.5, size = 2) +
+  facet_wrap(~time_period) +
+  labs(
+    title = "Pre-COVID and Post-COVID Periods vs GDP",
+    x = "Average GDP per Capita",
+    y = "Average Measles \nIncidence per Million",
+    color = "WHO Region") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0),
+        plot.title.position = "plot",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.y = element_text(angle = 0, vjust = 0.5),
+        panel.grid.minor = element_blank(),
+        legend.position = "top",
+        legend.title = element_text(face = "bold")
+        )
+```
