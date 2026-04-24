@@ -1,0 +1,102 @@
+---
+title: "project1-checkpoint-4"
+format: html
+editor: visual
+---
+
+load in packages and dataset:
+```{r}
+#| label: packages-setup
+#| message: false
+#| warning: false
+library(httr)
+library(tidyjson)
+library(jsonlite)
+library(tidyverse)
+library(stringr)
+cases_month <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_month.csv')
+cases_year <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-06-24/cases_year.csv')
+```
+
+
+#### Read in CSV
+
+```{r}
+url1 <- "https://raw.githubusercontent.com/amandaadong/project1/main/GDPdata.csv"
+gdp_df <- read.csv(url1)
+head(gdp_df)
+results <- read_csv("https://raw.githubusercontent.com/amandaadong/project1/main/GDPdata.csv")
+new <- read_csv("https://raw.githubusercontent.com/nataliecc686/measles-analysis/main/new.csv")
+```
+#### Join all the datasets (meta)
+
+```{r}
+results_clean <- results |>
+  mutate(
+    country = str_replace_all(country, "%20", " "),
+    year = as.numeric(year)
+  )
+
+meta_df <- cases_year |>
+ left_join(new, by = "country") |>
+ left_join(gdp_df, by = c("iso3" = "country", "year" = "year"))
+```
+
+
+```{r}
+# Check the join
+meta_df |>
+  select(iso3, country, year, gdp_per_capita_nominal, 
+         measles_incidence_rate_per_1000000_total_population,
+         measles_lab_confirmed, measles_total) |>
+  glimpse()
+
+# Check for NAs
+meta_df |>
+  summarize(
+    n_total = n(),
+    n_missing_gdp = sum(is.na(gdp_per_capita_nominal)),
+    n_missing_incidence = sum(is.na(measles_incidence_rate_per_1000000_total_population)),
+    n_missing_lab = sum(is.na(measles_lab_confirmed)),
+    n_missing_total = sum(is.na(measles_total)))
+```
+
+
+
+```{r}
+#| message: false
+#| warning: false
+
+### Visualization: Average AQI vs. Average Measles Cases by Country (2020–2025)
+meta_df %>%
+  filter(!is.na(total_aqi), !is.na(total_suspected_measles_rubella_cases)) %>%
+  group_by(country, total_aqi) %>%
+  summarise(avg_cases = mean(total_suspected_measles_rubella_cases, na.rm = TRUE)) %>%
+  ggplot(aes(x = total_aqi, y = avg_cases)) +
+  geom_point(alpha = 0.6, color = "dodgerblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red") +
+  scale_y_log10(labels = scales::comma) +
+  labs(
+    title = "Air Quality Index vs. Average Measles Cases by Country",
+    subtitle = "Each point represents one country; cases shown on log scale",
+    x = "Air Quality Index (higher = worse air quality)",
+    y = "Average Annual Measles Cases (log scale)",
+    caption = "Sources: API Ninjas AQI data; TidyTuesday measles dataset"
+  )
+```
+
+
+```{r}
+aqi_model <- meta_df |>
+  filter(!is.na(total_aqi), !is.na(total_suspected_measles_rubella_cases)) |>
+  group_by(country, total_aqi) |>
+  summarise(avg_cases = mean(total_suspected_measles_rubella_cases, na.rm = TRUE),
+            .groups = "drop") |>
+  mutate(log_avg_cases = log10(avg_cases + 1))
+
+# Fitting the model
+model <- lm(log_avg_cases ~ total_aqi, data = aqi_model)
+summary(model)
+```
+
+
